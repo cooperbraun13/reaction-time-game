@@ -93,4 +93,39 @@ def run_round(round_number):
         time.sleep(0.5)
         wait_for_button_release()
         return reaction_time
-            
+        
+def main():
+    # Run the reaction time test for multiple rounds and update high score if applicable
+    reaction_times = []
+    high_score = load_high_score()
+    
+    if high_score is not None:
+        print("Current best score: {:.0f} ms".format(high_score))
+    else:
+        print("No high score yet, try playing!")
+    
+    round_count = 1
+    while len(reaction_times) < NUM_ROUNDS:
+        rt = run_round(round_count)
+        reaction_times.append(rt)
+        round_count += 1
+        time.sleep(1)
+        
+    # Calculate the average reaction time
+    avg_reaction_time = sum(reaction_times) / len(reaction_times)
+    print("\nAverage reaction time over {} rounds: {:.0f} ms".format(NUM_ROUNDS, avg_reaction_time))
+    
+    # Update high score if the new average is lower
+    if (high_score is None) or (avg_reaction_time < high_score):
+        print("Congratulations! You scored a new best!")
+        save_high_score(avg_reaction_time)
+    else:
+        print("Best score remains: {:.0f} ms".format(high_score))
+        
+    # Final indicator
+    cpx.pixels.fill((0, 255, 255))
+    time.sleep(2)
+    cpx.pixels.fill((0, 0, 0))
+    
+if __name__ = "__main__":
+    main()
